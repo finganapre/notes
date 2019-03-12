@@ -18,7 +18,6 @@
 			            v-model="formData.text"
 			            label="Введите текст заметки..."
 			            auto-grow
-			            required
 			            hide-details
 			         ></v-textarea>
 				</v-flex>

@@ -1,9 +1,9 @@
 <template>
 	<v-container>
 		<v-layout align-stretch justify-start row wrap class="notes-container">
-			<v-flex xs12 sm6 md4 lg3 xl2 v-for="note in notes" :key="note.id">
+			<v-flex class="notes-item" xs12 sm6 md4 lg3 xl2 v-for="note in notes" :key="note.id">
 				<Note
-					class="notes-item"
+					class="notes-item-card"
 					:content="note"
 				></Note>
 			</v-flex>
@@ -50,6 +50,12 @@
 		margin: -15px;
 	}
 	.notes-item {
-		margin: 15px;
+		padding: 15px;
+	}
+	.notes-item-card {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
 	}
 </style>

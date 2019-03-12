@@ -1,7 +1,5 @@
 <template>
 	<v-app id="app">
-		
-		</v-btn>
 
 		<MainNavDrawer
 			:mainNavbarDrawer = "mainNavbarDrawer"
@@ -12,10 +10,10 @@
 
 		<MainToolbar
 			:appName = appName
-      @openCloseMainNav = "openCloseMainNav"
-      @reloadPage = "reloadPage"
-      @prePage = "prePage"
-      @nextPage = "nextPage"
+			@openCloseMainNav = "openCloseMainNav"
+			@reloadPage = "reloadPage"
+			@prePage = "prePage"
+			@nextPage = "nextPage"
 		></MainToolbar>
 
 
@@ -30,7 +28,8 @@
 </template>
 
 <script>
-	import MainToolbar from "@/components/ui/MainToolbar"
+	import api from '@/services/api'
+	import MainToolbar from '@/components/ui/MainToolbar'
 	import MainNavDrawer from '@/components/ui/MainNavDrawer'
 
 	export default {
@@ -73,12 +72,12 @@
 		},
 		methods: {
 			openCloseMainNav() {
-      	this.mainNavbarDrawer = !(this.mainNavbarDrawer);
-	    },
-	    onChangeMainNavState(state) {
-	      this.mainNavbarDrawer = state;
-	    },
-	    reloadPage() {
+				this.mainNavbarDrawer = !(this.mainNavbarDrawer);
+			},
+			onChangeMainNavState(state) {
+				this.mainNavbarDrawer = state;
+			},
+			reloadPage() {
 				document.location.reload(true);
 			},
 			prePage() {
@@ -88,10 +87,35 @@
 				this.$router.go(1);
 			},
 
-			// api
+			// ---------- API ---------- //
+			// getAllNotes
+			getAllNotes() {
+				api().get('/notes')
+					.then(response => {
+						this.notes = response.data;
+					})
+					.catch(err => {
+						console.log(err);
+					});
+			},
+			// addNote
 			addNote(formData) {
-				console.log('addNote', formData);
+				let data = formData;
+				console.log(data);
+				api().post('/notes', data)
+				.then(response => {
+					console.log(response);
+				})
+				.catch(err => {
+					console.log(err);
+				});
 			}
+		},
+		created(){
+			this.getAllNotes();
+		},
+		mounted(){
+			this.getAllNotes();
 		},
 		components: {
 			MainNavDrawer: MainNavDrawer,

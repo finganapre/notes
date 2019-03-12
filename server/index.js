@@ -4,11 +4,12 @@ const logger = require('morgan');
 
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
+const urlencodedParser = bodyParser.urlencoded({ extended: true });
 const cors = require('cors');
 
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+
 
 const notesAPIRoutes = require('./routes/notesAPI');
 
@@ -24,8 +25,6 @@ mongoose.set('debug', true);
 
 
 
-
-
 // middleware
 app.use(logger('combined'));
 app.use(cors());
@@ -34,12 +33,8 @@ app.use(urlencodedParser);
 
 
 
-
-
 // routes
 app.use('/api', notesAPIRoutes);
-
-
 
 
 
