@@ -119,7 +119,7 @@ app.put('/api/notes/:id', (req, res) => {
 	// find note
 	let note = notes.find( item => item.id === req.params.id );
 
-	// if didn't find note
+	// if not find note
 	if ( !note ){
 		res.status(404).send(`The note with id "${req.params.id}" was not found`);
 		return;
