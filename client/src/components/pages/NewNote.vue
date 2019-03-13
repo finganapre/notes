@@ -27,8 +27,7 @@
 			prePage: function() {
 				this.$emit('prePage');
 			}
-		},
-
+		}
 	}
 </script>
 

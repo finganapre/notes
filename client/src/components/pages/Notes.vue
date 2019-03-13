@@ -1,7 +1,7 @@
 <template>
 	<v-container>
 		<v-layout align-stretch justify-start row wrap class="notes-container">
-			<v-flex class="notes-item" xs12 sm6 md4 lg3 xl2 v-for="note in updateDateSort" :key="note.id">
+			<v-flex class="notes-item" xs12 sm6 md4 lg4 xl2 v-for="note in updateDateSort" :key="note.id">
 				<Note
 					class="notes-item-card"
 					:content="note"
@@ -37,7 +37,7 @@
 			}
 		},
 		computed: {
-			updateDateSort(){
+			updateDateSort() {
 				let arr = this.notes;
 
 				arr.sort(function(a, b){
