@@ -1,21 +1,28 @@
 <template>
-	<v-card>
+	<v-card
+		hover
+	>
 		<div>
 			<v-card-title primary-title>
-				<h2 class="headline mb-0">{{ content.title }}</h2>
-				<span class="grey--text">Создано: {{ createdDate }}</span><br>
-				<span class="grey--text">Обновлено: {{ updateDate }}</span>
+				<h2 class="note-title headline mb-1">{{ content.title }}</h2>
+				<div class="notes-timestamp-container">
+					<span class="grey--text ico-text"><v-icon class="ico-text-ico grey--text">mdi-calendar-clock</v-icon> {{ createdDate }}</span>
+					<span class="grey--text ico-text"><v-icon class="ico-text-ico grey--text">mdi-calendar-edit</v-icon> {{ updateDate }}</span>
+				</div>
 			</v-card-title>
 			<v-card-text>
-				<div> {{ content.text }} </div>
+				<p> {{ cutDescription }} </p>
 			</v-card-text>
 		</div>
 		<v-card-actions>
-			<v-btn flat color="primary" ico circle>
-				<v-icon circle>edit</v-icon circle>
+			<v-btn flat icon color="secondary">
+            	<v-icon>mdi-file-document-box-outline</v-icon>
+            </v-btn>
+			<v-btn flat icon color="primary">
+				<v-icon>edit</v-icon>
 			</v-btn>
-            <v-btn flat color="secondary" ico>
-            	<v-icon circle>trash</v-icon circle>
+            <v-btn flat icon color="error">
+            	<v-icon>mdi-trash-can-outline</v-icon>
             </v-btn>
 		</v-card-actions>
 	</v-card>
@@ -26,6 +33,12 @@
 		props: {
 			content: Object
 		},
+		data() {
+			return {
+				maxDescriptionLength: 100
+			}
+			
+		},
 		computed: {
 			createdDate(){
 				let date = new Date(this.content.date_create);
@@ -35,6 +48,16 @@
 			updateDate(){
 				let date = new Date(this.content.date_update);
 				return `${timeConverter(date)}`
+			},
+			cutDescription(){
+				let description = this.content.text;
+
+				if ( description.length >= this.maxDescriptionLength){
+					description = description.substring(0, maxDescriptionLength - 3);
+					description += '...';
+				}
+
+				return description;
 			}
 		}
 	}
@@ -70,5 +93,25 @@
 </script>
 
 <style scoped>
-	
+	.ico-text {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	.ico-text-ico {
+		font-size: 18px;
+		margin-right: 5px;
+	}
+	.note-title{
+		width: 100%;
+		white-space: nowrap;
+    	overflow: hidden;
+    	text-overflow: ellipsis;
+	}
+	.notes-timestamp-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: start;
+		align-items: start;
+	}
 </style>

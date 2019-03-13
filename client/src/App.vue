@@ -38,36 +38,7 @@
 			return {
 				appName: 'Мои заметки',
 				mainNavbarDrawer: null,
-				notes: [
-					{
-						id: '1',
-						title: 'Заголовок 1',
-						text: 'Текст для заметки 1',
-						createDate: 1513759529,
-						updateDate: 1513759529
-					},
-					{
-						id: '2',
-						title: 'Заголовок 2',
-						text: 'Текст для заметки 2',
-						createDate: 1513759529,
-						updateDate: 1513759529
-					},
-					{
-						id: '3',
-						title: 'Заголовок 3',
-						text: 'Текст для заметки 3',
-						createDate: 1513759529,
-						updateDate: 1513759529
-					},
-					{
-						id: '4',
-						title: 'Заголовок 4',
-						text: 'Текст для заметки 4',
-						createDate: 1513759529,
-						updateDate: 1513759529
-					}
-				]
+				notes: []
 			}
 		},
 		methods: {
