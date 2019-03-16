@@ -65,6 +65,9 @@ module.exports.addNote = async function(req, res) {
 		// добавленную заметку
 		// чтобы добавить её на страницу без доп. запроса
 		// всех заметок с сервера
+		// и необходимостью лишних действий на клиенте
+		// по сохранению заполненных полей
+		// перед отправкой
 		res.status(201).json({
 			success: true,
 			message: 'Created',
@@ -107,7 +110,7 @@ module.exports.getNoteById = async function(req, res) {
 module.exports.updateNoteById = async function(req, res){
 	try {
 
-		if ( !req.params.title ) {
+		if ( !req.body.title ) {
 			res.status(400).json({
 				success: false,
 				message: 'The field "title" cannot be empty'
@@ -115,21 +118,23 @@ module.exports.updateNoteById = async function(req, res){
 			return;
 		}
 
-		let date = genUNIXTime;
+		let date = genUNIXTime();
 
-		let note = await Notes.findOneAndUpdate(
+		await Notes.findOneAndUpdate(
 			{
 				id: req.params.id
 			},
 			{
 				$set:
 				{
-					title: req.params.title,
-					text: req.params.text,
+					title: req.body.title,
+					text: req.body.text,
 					date_update: date
 				}
 			}
 		);
+
+		let note = await Notes.findOne( {id: req.params.id} );
 
 		res.status(200).json({
 			success: true,
@@ -151,15 +156,23 @@ module.exports.deleteNoteById = async function(req, res){
 		if ( !req.params.id ) {
 			res.status(400).json({
 				success: false,
-				message: 'params "id" is empty'
+				message: 'params "id" is required'
 			});
 		}
 
-		await Equipments.remove( {id: req.params.id} );
+		// На случай, если клиент захочет отменить удаление,
+		// и заного добавить заметку (можно улучшить маршрут добавления
+		// заметок, чтобы сохранять первоначальное время создания
+		// удалённых заметок),
+		// возвращаем в ответе удалённую заметку
+		let note = await Notes.findOne( {id: req.params.id} );
+
+		await Notes.remove( {id: req.params.id} );
 
 		res.status(200).json({
 			success: true,
-			message: `Note with id ${req.params.id} was deleted successfully`
+			message: `Note with id ${req.params.id} was deleted successfully`,
+			data: note
 		});
 	} catch (err) {
 		errorHandler(res, err);
