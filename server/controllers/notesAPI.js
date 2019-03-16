@@ -1,118 +1,167 @@
-const notes = require('../models/NotesEmulated');
+// ----- npm libs ----- //
+const genId = require('uuid/v1');
+
+// ----- db ----- //
 const Notes = require('../models/Note');
 
-const config = 'emulated';
+// ----- custom modules ----- //
+const genUNIXTime = require('../modules/genUNIXTime');
+const errorHandler = require('../modules/errorHandler');
 
 
 
 
 
-switch (config) {
-	case 'emulated':
-		// get all notes
-		module.exports.getAllNotes = async function(req, res){
-			res.status(200).send(notes);
+// ----- main code ----- //
+
+// get all notes
+module.exports.getAllNotes = async function(req, res) {
+	try {
+
+		let notes = await Notes.find();
+
+		res.status(200).json({
+			success: true,
+			message: 'Ok',
+			data: notes
+		});
+
+	} catch (err) {
+		errorHandler(res, err);
+	}
+}
+
+
+
+// add note
+module.exports.addNote = async function(req, res) {
+	try {
+
+		if ( !req.body.title ) {
+			res.status(400).json({
+				success: false,
+				message: 'The field "title" cannot be empty'
+			});
+			return;
 		}
 
+		let title = req.body.title;
+		let text = req.body.text || '';
+
+		let time = genUNIXTime();
+		let id = genId();
+
+		let note = await new Notes ({
+			id: id,
+			title: title,
+			text: text,
+			date_create: time,
+			date_update: time
+		}).save();
+
+		// немного добавил от себя:
+		// мне кажется, будет полезным
+		// отправить обратно на клиент
+		// добавленную заметку
+		// чтобы добавить её на страницу без доп. запроса
+		// всех заметок с сервера
+		res.status(201).json({
+			success: true,
+			message: 'Created',
+			data: note
+		});
+	} catch (err) {
+		errorHandler(res, err);
+	}
+}
 
 
-		// add note
-		module.exports.addNote = async function(req, res){
-			console.log(req.body);
 
-			let title = req.body.title;
-			let text = req.body.text || '';
+// get note by id
+module.exports.getNoteById = async function(req, res) {
+	try {
+		let note = await Notes.findOne( {id: req.params.id} );
 
-			console.log(title, text);
+		if ( !note ) {
+			res.status(404).json({
+				success: false,
+				message: `The note with id "${req.params.id}" was not found`
+			});
+			return;
+		}
+		
+		res.status(200).json({
+			success: true,
+			message: 'Ok',
+			data: note
+		});
 
-			if ( !title ){
-				res.status(400).send('The field "title" cannot be empty');
-				return;
-			}
+	} catch (err) {
+		errorHandler(res, err);
+	}
+}
 
-			let date = Math.round(new Date().getTime()/1000.0);
 
-			const note = {
-				id: (notes.length + 1).toString(),
-				title: title,
-				text: text,
-				date_create: date,
-				date_update: date
-			}
 
-			notes.push(note);
+// update note
+module.exports.updateNoteById = async function(req, res){
+	try {
 
-			res.status(201).send(note);
+		if ( !req.params.title ) {
+			res.status(400).json({
+				success: false,
+				message: 'The field "title" cannot be empty'
+			});
+			return;
 		}
 
+		let date = genUNIXTime;
 
-
-		// get note by id
-		module.exports.getNoteById = async function(req, res){
-			let note = notes.find( item => item.id === req.params.id );
-
-			if ( !note ){
-				res.status(404).send(`The note with id "${req.params.id}" was not found`);
-				return;
+		let note = await Notes.findOneAndUpdate(
+			{
+				id: req.params.id
+			},
+			{
+				$set:
+				{
+					title: req.params.title,
+					text: req.params.text,
+					date_update: date
+				}
 			}
+		);
 
-			res.status(200).send(note);
+		res.status(200).json({
+			success: true,
+			message: 'Ok',
+			data: note
+		});
+
+	} catch (err) {
+		errorHandler(res, err);
+	}
+}
+
+
+
+// delete note
+module.exports.deleteNoteById = async function(req, res){
+	try {
+
+		if ( !req.params.id ) {
+			res.status(400).json({
+				success: false,
+				message: 'params "id" is empty'
+			});
 		}
 
+		await Equipments.remove( {id: req.params.id} );
 
-
-		// update note
-		module.exports.updateNoteById = async function(req, res){
-			// find note
-			let note = notes.find( item => item.id === req.params.id );
-
-			// if not find note
-			if ( !note ){
-				res.status(404).send(`The note with id "${req.params.id}" was not found`);
-				return;
-			}
-
-			let title = req.body.title;
-			let text = req.body.text || '';
-
-			// if title empty
-			if ( !title ){
-				res.status(400).send('The field "title" cannot be empty');
-				return;
-			}
-
-
-			let date = Math.round(new Date().getTime()/1000.0);
-
-			note.title = title;
-			note.text = text;
-			note.date_update = date;
-
-
-			res.status(200).send(note);
-		}
-
-
-
-		// delete note
-		module.exports.deleteNoteById = async function(req, res){
-			let note = notes.find( item => item.id === req.params.id );
-
-			// if not found note
-			if ( !note ){
-				res.status(404).send(`The note with id "${req.params.id}" was not found`);
-				return;
-			}
-
-			// remove note
-			const idx = notes.indexOf(note);
-			notes.splice(idx, 1);
-
-			// response
-			res.status(200).send(note);
-		}
-		break;
-	default:
-
-		break;
+		res.status(200).json({
+			success: true,
+			message: `Note with id ${req.params.id} was deleted successfully`
+		});
+	} catch (err) {
+		errorHandler(res, err);
+	}
 }
