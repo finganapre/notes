@@ -139,6 +139,7 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		text-transform: uppercase;
 	}
 	.notes-timestamp-container {
 		display: flex;

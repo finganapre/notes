@@ -24,7 +24,7 @@
 				</v-list-tile>
 				<!-- START Services -->
 				<v-list-group
-					prepend-icon="note"
+					prepend-icon="mdi-note-multiple-outline"
 					v-if="notesNavList"
 				>
 					<v-list-tile slot="activator">
@@ -61,7 +61,7 @@
 						mainNavbarDrawerLocal: this.mainNavbarDrawer,
 
 						mainNavbarMenuList: [
-						  {title: 'На главную', icon: 'home', link: '/'},
+						  {title: 'На главную', icon: 'mdi-home-outline', link: '/'},
 						  {title: 'Новая заметка', icon: 'add_circle_outline',  link: 'new-note'}
 						]
 					}
@@ -71,7 +71,7 @@
 						let links = [];
 
 						this.notes.forEach(function(item){
-							links.push([item.title, 'note', item.id]);
+							links.push([item.title, 'mdi-note-outline', item.id]);
 						});
 
 						return links;

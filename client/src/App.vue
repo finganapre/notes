@@ -63,7 +63,7 @@
 			getAllNotes() {
 				api().get('/notes')
 					.then(response => {
-						this.notes = response.data;
+						this.notes = response.data.data;
 					})
 					.catch(err => {
 						console.log(err);
@@ -72,7 +72,7 @@
 			// addNote
 			addNote(formData) {
 				let data = formData;
-				console.log(data);
+
 				api().post('/notes', data)
 				.then(response => {
 					console.log(response);
@@ -80,6 +80,35 @@
 				.catch(err => {
 					console.log(err);
 				});
+			},
+
+			// getNoteById
+			getNote(formData) {
+				api().get(`/notes/${formData.id}`, formData)
+				.then(response => {
+					console.log(response);
+				})
+				.catch(err => {
+					console.log(err);
+				});
+			},
+
+			// updateNote
+			updateNote(formData) {
+				let data = formData;
+				api()
+					.put('/notes', {
+						data: formData,
+						query: {
+							id: formData.id
+						}
+					})
+					.then(response => {
+						console.log(response);
+					})
+					.catch(err => {
+						console.log(err);
+					});
 			}
 		},
 		created(){
@@ -96,6 +125,9 @@
 </script>
 
 <style>
+	html, body {
+		min-width: 303px;
+	}
 	/*  router animation */
 	.page-enter-active, .page-leave-active {
 		transition: opacity 0.3s;
